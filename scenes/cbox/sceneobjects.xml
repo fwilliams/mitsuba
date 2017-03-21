@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+
+  <shape type="obj">
+    <string name="filename" value="meshes/cbox_floor.obj"/>
+    <ref id="checker"/>
+  </shape>
+  
+  <shape type="obj">
+    <string name="filename" value="meshes/cbox_ceiling.obj"/>
+    <ref id="gray"/>
+  </shape>
+
+  <shape type="obj">
+    <string name="filename" value="meshes/cbox_back.obj"/>
+    <ref id="gray"/>
+  </shape>
+
+  <shape type="obj">
+    <string name="filename" value="meshes/cbox_greenwall.obj"/>
+
+    <ref id="gray"/>
+  </shape>
+
+  <shape type="obj">
+    <string name="filename" value="meshes/cbox_redwall.obj"/>
+
+    <ref id="gray"/>
+  </shape>
+
+  <shape type="obj">
+    <string name="filename" value="meshes/cbox_smallbox.obj"/>
+
+    <bsdf type="roughplastic">
+      <string name="distribution" value="ggx"/>
+      <srgb name="diffuseReflectance" value="#303055"/>
+    </bsdf>
+
+  </shape>
+
+  <shape type="sphere">
+    <point name="center" x="0" y="0" z="0"/>
+    <float name="radius" value="1"/>
+
+    <bsdf type="roughconductor">
+      <string name="distribution" value="ggx"/>
+    </bsdf>
+
+    <transform name="toWorld">
+      <translate x="0" y="1.0" z="0"/>
+      <scale x="100" y="100" z="100"/>
+      <translate x="375" y="0" z="300"/>
+    </transform>
+  </shape>
+
