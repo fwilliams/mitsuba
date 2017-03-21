@@ -1014,4 +1014,52 @@
 			simply set it to the current frame index.
 		</param>
 	</plugin>
+	<plugin type="integrator" name="opath" readableName="Orbifold Path tracer"
+		show="true" className="OrbifoldPathTracer" extends="MonteCarloIntegrator">
+	  <descr>
+	    This integrator implements a basic path tracer with multiple importance sampling and is a <em>good
+	    default choice</em> when there is no strong reason to prefer another method.
+	    It does not account for participating media, such as fog or smoke&mdash;see
+	    the volumetric path tracer if this is needed.
+	  </descr>
+	  <param name="incompleteness mode" readableName="Incompleteness Mode" type="boolean" default="false">
+	    Are we rendering an incompleteness image?
+	  </param>
+	  <param name="r1" readableName="Reflectance 1" type="float" default="1.0">
+	    The reflectance of the first mirror.
+	  </param>
+	  <param name="r2" readableName="Reflectance 2" type="float" default="1.0">
+	    The reflectance of the first mirror.
+	  </param>
+	  <param name="r3" readableName="Reflectance 3" type="float" default="1.0">
+	    The reflectance of the first mirror.
+	  </param>
+	  <param name="r4" readableName="Reflectance 4" type="float" default="1.0">
+	    The reflectance of the first mirror.
+	  </param>
+
+	  <param name="sx" readableName="Scale X" type="float" default="560.0">
+	    The size of the x-axis of the scene's bounding box.
+	  </param>
+	  <param name="sy" readableName="Scale Y" type="float" default="560.0">
+	    The size of the y-axis of the scene's bounding box.
+	  </param>
+	  <param name="sz" readableName="Scale Z" type="float" default="560.0">
+	    The size of the z-axis of the scene's bounding box.
+	  </param>
+	  <param name="otype" readableName="Kaleidoscope type" type="string" default="none">
+	    The type of kaleidoscope. Must be one of "none", "**", "*2222", "*333", "*442", or "*632" without the quotes.
+	  </param>
+	</plugin>	
+
+	<plugin type="integrator" name="depth" readableName="Depth Map Integrator"
+		show="true" className="DepthIntegrator" extends="SamplingIntegrator">
+	  <descr>
+	    <p>Render a depth image</p>
+	  </descr>
+	  <param name="incompleteness mode" readableName="Incompleteness Mode" type="boolean" default="false">
+	    Are we rendering an incompleteness image?
+	  </param>
+	</plugin>	
+
 </documentation>

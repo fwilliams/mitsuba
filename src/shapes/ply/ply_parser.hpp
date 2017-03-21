@@ -24,6 +24,7 @@
 #    define MTS_USE_BOOST_TR1 1
 #  else
 #    define MTS_USE_BOOST_TR1 0
+#    define ADT_WORKAROUND 1
 #  endif
 #endif
 

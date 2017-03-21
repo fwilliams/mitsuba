@@ -482,6 +482,17 @@ public:
 	Spectrum sampleEmitterDirect(DirectSamplingRecord &dRec,
 			const Point2 &sample, bool testVisibility = true) const;
 
+
+	struct OrbifoldRecord {
+	  Spectrum value;
+	  Intersection its;
+	  Ray ray;
+	};
+
+	OrbifoldRecord sampleEmitterDirectO(DirectSamplingRecord &dRec,
+					    const Point2 &sample, bool testVisibility = true) const;
+
+	
 	/**
 	 * \brief "Direct illumination" sampling routine for the main scene sensor
 	 *

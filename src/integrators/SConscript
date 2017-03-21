@@ -2,7 +2,9 @@ Import('env', 'sys', 'plugins')
 
 plugins += env.SharedLibrary('ao', ['direct/ao.cpp'])
 plugins += env.SharedLibrary('direct', ['direct/direct.cpp'])
+plugins += env.SharedLibrary('depth', ['depth/depth.cpp'])
 plugins += env.SharedLibrary('path', ['path/path.cpp'])
+plugins += env.SharedLibrary('opath', ['orbifold_path/opath.cpp', 'orbifold_path/orbifold.cpp'])
 plugins += env.SharedLibrary('volpath', ['path/volpath.cpp'])
 plugins += env.SharedLibrary('volpath_simple', ['path/volpath_simple.cpp'])
 plugins += env.SharedLibrary('ptracer', ['ptracer/ptracer.cpp', 'ptracer/ptracer_proc.cpp'])
@@ -18,7 +20,7 @@ plugins += env.SharedLibrary('adaptive', ['misc/adaptive.cpp'])
 plugins += env.SharedLibrary('irrcache', ['misc/irrcache.cpp', 'misc/irrcache_proc.cpp'])
 plugins += env.SharedLibrary('multichannel', ['misc/multichannel.cpp'])
 plugins += env.SharedLibrary('field', ['misc/field.cpp'])
-plugins += env.SharedLibrary('motion', ['misc/motion.cpp'])
+#plugins += env.SharedLibrary('motion', ['misc/motion.cpp'])
 
 # Bidirectional techniques
 bidirEnv = env.Clone()

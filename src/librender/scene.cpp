@@ -873,6 +873,48 @@ Spectrum Scene::sampleAttenuatedEmitterDirect(DirectSamplingRecord &dRec,
 	}
 }
 
+
+// ===========================================================================
+//          Emission and direct illumination sampling with orbifold
+//          attenuation
+// ===========================================================================
+
+Scene::OrbifoldRecord Scene::sampleEmitterDirectO(DirectSamplingRecord &dRec, const Point2 &_sample, bool testVisibility) const {
+    Point2 sample(_sample);
+
+    /* Randomly pick an emitter */
+    Float emPdf;
+    size_t index = m_emitterPDF.sampleReuse(sample.x, emPdf);
+    const Emitter *emitter = m_emitters[index].get();
+    Spectrum value = emitter->sampleDirect(dRec, sample);
+
+    OrbifoldRecord ret;
+    ret.value = value;
+
+    if (dRec.pdf != 0) {
+        Ray ray(dRec.ref, dRec.d, Epsilon,
+                dRec.dist*(1-ShadowEpsilon), dRec.time);
+        if (testVisibility) {
+            if (m_kdtree->rayIntersect(ray)) {
+                ret.value = Spectrum(0.0f);
+                return ret;
+            }
+        }
+        dRec.object = emitter;
+        dRec.pdf *= emPdf;
+        value /= emPdf;
+
+        ret.value = value;
+        ret.its.p = ray.o + ray.d*dRec.dist;
+        ret.ray = ray;
+        return ret;
+    } else {
+        ret.value = Spectrum(0.0f);
+        return ret;
+    }
+}
+
+
 Spectrum Scene::sampleAttenuatedEmitterDirect(DirectSamplingRecord &dRec,
 		const Intersection &its, const Medium *medium, int &interactions,
 		const Point2 &_sample, Sampler *sampler) const {

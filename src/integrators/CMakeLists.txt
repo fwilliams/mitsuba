@@ -13,7 +13,9 @@ endmacro()
 
 add_integrator(ao       direct/ao.cpp)
 add_integrator(direct   direct/direct.cpp)
+add_integrator(depth    depth/depth.cpp)
 add_integrator(path     path/path.cpp)
+add_integrator(opath    orbifold_path/opath.cpp orbifold_path/orbifold.cpp)
 add_integrator(volpath  path/volpath.cpp)
 add_integrator(volpath_simple path/volpath_simple.cpp)
 add_integrator(ptracer  ptracer/ptracer.cpp

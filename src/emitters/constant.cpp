@@ -67,7 +67,7 @@ public:
 	ref<Shape> createShape(const Scene *scene) {
 		/* Create a bounding sphere that surrounds the scene */
 		BSphere sceneBSphere(scene->getAABB().getBSphere());
-		sceneBSphere.radius = std::max(Epsilon, sceneBSphere.radius * 1.5f);
+        sceneBSphere.radius = std::max(Epsilon, sceneBSphere.radius * 1.5f);
 		BSphere geoBSphere(scene->getKDTree()->getAABB().getBSphere());
 
 		if (sceneBSphere != m_sceneBSphere || geoBSphere != m_geoBSphere) {
@@ -199,9 +199,9 @@ public:
 		if (!(nearT < 0 && farT > 0))
 			return Spectrum(0.0f);
 
-		dRec.p = ray(farT);
+        dRec.p = ray(farT);
 		dRec.n = normalize(m_sceneBSphere.center - dRec.p);
-		dRec.measure = ESolidAngle;
+        dRec.measure = ESolidAngle;
 		dRec.d = ray.d;
 		dRec.dist = farT;
 		dRec.pdf = pdf;
