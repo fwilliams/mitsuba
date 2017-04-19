@@ -242,7 +242,7 @@ public:
 			if (scene->rayIntersect(ray, its)) {
 				/* Intersected something - check if it was a luminaire */
 				if (its.isEmitter()) {
-					value = its.Le(-ray.d);
+                    value = its.Le(-ray.d) * m_odata.attenuate(ray, its);
 					dRec.setQuery(ray, its);
 					hitEmitter = true;
 				}
@@ -254,7 +254,7 @@ public:
 					if (m_hideEmitters && !scattered)
 						break;
 
-					value = env->evalEnvironment(ray);
+                    value = env->evalEnvironment(ray) * m_odata.attenuate(ray, its);;
 					if (!env->fillDirectSamplingRecord(dRec, ray))
 						break;
 					hitEmitter = true;
@@ -265,7 +265,7 @@ public:
 
 			/* Keep track of the throughput and relative
 			   refractive index along the path */
-			throughput *= bsdfWeight;
+            throughput *= bsdfWeight * orbifoldAttenuation;
 			eta *= bRec.eta;
 
 			/* If a luminaire was hit, estimate the local illumination and
@@ -276,7 +276,7 @@ public:
 				   implemented direct illumination sampling technique */
 				const Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ?
 					scene->pdfEmitterDirect(dRec) : 0;
-                Li += throughput * value * miWeight(bsdfPdf, lumPdf) * orbifoldAttenuation;
+                Li += throughput * value * miWeight(bsdfPdf, lumPdf);
 			}
 
 			/* ==================================================================== */

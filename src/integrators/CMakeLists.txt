@@ -48,3 +48,6 @@ add_bidir(mlt           mlt/mlt.h      mlt/mlt.cpp
 
 add_bidir(erpt          erpt/erpt.h      erpt/erpt.cpp
                         erpt/erpt_proc.h erpt/erpt_proc.cpp)
+
+add_bidir(oerpt         oerpt/erpt.h      erpt/erpt.cpp
+                        oerpt/erpt_proc.h erpt/erpt_proc.cpp)

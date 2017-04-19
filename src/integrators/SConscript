@@ -42,4 +42,8 @@ plugins += bidirEnv.SharedLibrary('erpt',
 	['erpt/erpt.cpp', 'erpt/erpt_proc.cpp']
 )
 
+plugins += bidirEnv.SharedLibrary('oerpt',
+	['oerpt/erpt.cpp', 'oerpt/erpt_proc.cpp']
+)
+
 Export('plugins')

@@ -771,6 +771,10 @@ src/integrators/mlt/mlt.cpp
 src/integrators/mlt/mlt.h
 src/integrators/mlt/mlt_proc.cpp
 src/integrators/mlt/mlt_proc.h
+src/integrators/oerpt/erpt.h
+src/integrators/oerpt/erpt.cpp
+src/integrators/oerpt/erpt_proc.h
+src/integrators/oerpt/erpt_proc.cpp
 src/integrators/orbifold_path/opath.cpp
 src/integrators/orbifold_path/orbifold.cpp
 src/integrators/path/path.cpp
