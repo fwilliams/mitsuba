@@ -20,7 +20,7 @@ struct OrbifoldData {
     };
 
     OrbifoldData() :
-        m_scale(Vector3(1, 1, 1)), m_r1(0), m_r2(0), m_r3(0), m_r4(0),
+        m_scale(Vector3(1, 1, 1)),
         m_numKernelTiles(1),
         m_type(OrbifoldType::OT_NONE),
         attenuate_callback(&OrbifoldData::attenuateTrivial),
@@ -37,10 +37,11 @@ struct OrbifoldData {
     Vector3 m_scale;
 
     ///
-    /// The reflectivity of each mirror. Depending on the orbifold type,
-    /// not all of these are used
+    /// The index of refraction and reflectivity of each mirror.
+    /// Depending on the orbifold type, not all of these are used
     ///
-    Float m_r1, m_r2, m_r3, m_r4;
+    Spectrum m_k[4];
+    Spectrum m_eta[4];
 
     ///
     /// The number of tiles in the kernel being rendered
@@ -56,7 +57,7 @@ struct OrbifoldData {
     /// Computes the attenuation along a ray which may intersect one or more mirror boundaries
     /// in the unfolded scene
     ///
-    inline Float attenuate(const Ray& r, const Intersection& i) const {
+    inline Spectrum attenuate(const Ray& r, const Intersection& i) const {
         return (this->*attenuate_callback)(r, i);
     }
 
@@ -146,7 +147,7 @@ private:
     ///
     /// Mirror attenuation callback type
     ///
-    typedef Float (OrbifoldData::*OrbifoldAttenuationCallback)(const Ray& r, const Intersection& isect) const;
+    typedef Spectrum (OrbifoldData::*OrbifoldAttenuationCallback)(const Ray& r, const Intersection& isect) const;
 
     ///
     /// Point collapse callback (see collapse)
@@ -196,15 +197,15 @@ private:
                                      const Vector2& dir, const StaticDirectionInfo& s_dir,
                                      const DynamicDirectionInfo& d_dir) const;
 
-    Float attenuateTrivial(const Ray& ray, const Intersection& isect) const {
-        return 1.0;
+    Spectrum attenuateTrivial(const Ray& ray, const Intersection& isect) const {
+        return Spectrum(1.0);
     }
     //  Float attenuateX333(const Ray& ray, const Intersection& isect) const;
-    Float attenuateX2222(const Ray& ray, const Intersection& isect) const;
-    Float attenuateXX(const Ray& ray, const Intersection& isect) const;
-    Float attenuateX333(const Ray& ray, const Intersection& isect) const;
-    Float attenuateX632(const Ray& ray, const Intersection& isect) const;
-    Float attenuateX442(const Ray& ray, const Intersection& isect) const;
+    Spectrum attenuateX2222(const Ray& ray, const Intersection& isect) const;
+    Spectrum attenuateXX(const Ray& ray, const Intersection& isect) const;
+    Spectrum attenuateX333(const Ray& ray, const Intersection& isect) const;
+    Spectrum attenuateX632(const Ray& ray, const Intersection& isect) const;
+    Spectrum attenuateX442(const Ray& ray, const Intersection& isect) const;
 
     Vector3 collapseTrivial(const Vector3& pt, Vector3& o) const { return pt; }
     //  Vector3 collapseX333(const Vector3& pt, Vector3& o) const;

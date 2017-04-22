@@ -1025,18 +1025,6 @@
 	  <param name="incompleteness mode" readableName="Incompleteness Mode" type="boolean" default="false">
 	    Are we rendering an incompleteness image?
 	  </param>
-	  <param name="r1" readableName="Reflectance 1" type="float" default="1.0">
-	    The reflectance of the first mirror.
-	  </param>
-	  <param name="r2" readableName="Reflectance 2" type="float" default="1.0">
-	    The reflectance of the first mirror.
-	  </param>
-	  <param name="r3" readableName="Reflectance 3" type="float" default="1.0">
-	    The reflectance of the first mirror.
-	  </param>
-	  <param name="r4" readableName="Reflectance 4" type="float" default="1.0">
-	    The reflectance of the first mirror.
-	  </param>
 
 	  <param name="sx" readableName="Scale X" type="float" default="560.0">
 	    The size of the x-axis of the scene's bounding box.

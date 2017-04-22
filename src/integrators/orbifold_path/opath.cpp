@@ -115,10 +115,17 @@ public:
 
         m_odata = OrbifoldData();
         m_odata.m_incompletenessMode = props.getBoolean("incompleteness mode", false);
-        m_odata.m_r1 = props.getFloat("r1", 1.0);
-        m_odata.m_r2 = props.getFloat("r2", 1.0);
-        m_odata.m_r3 = props.getFloat("r3", 1.0);
-        m_odata.m_r4 = props.getFloat("r4", 1.0);
+
+        m_odata.m_k[0] = props.getSpectrum("k1", Spectrum(1.0));
+        m_odata.m_k[1] = props.getSpectrum("k2", Spectrum(1.0));
+        m_odata.m_k[2] = props.getSpectrum("k3", Spectrum(1.0));
+        m_odata.m_k[3] = props.getSpectrum("k4", Spectrum(1.0));
+
+        m_odata.m_eta[0] = props.getSpectrum("eta1", Spectrum(1.0));
+        m_odata.m_eta[1] = props.getSpectrum("eta2", Spectrum(1.0));
+        m_odata.m_eta[2] = props.getSpectrum("eta3", Spectrum(1.0));
+        m_odata.m_eta[3] = props.getSpectrum("eta4", Spectrum(1.0));
+
         m_odata.m_numKernelTiles = 3;
         m_odata.m_scale = Vector3(props.getFloat("sx", 560.0), props.getFloat("sy", 560.0), props.getFloat("sz", 560.0));
         m_otype = props.getString("otype", "none");
@@ -141,35 +148,32 @@ public:
 		rRec.rayIntersect(ray);
 		ray.mint = Epsilon;
 
-		Spectrum throughput(1.0f);
+        Spectrum throughput = Spectrum(1.0f) * m_odata.attenuate(ray, its);
 		Float eta = 1.0f;
 
 		while (rRec.depth <= m_maxDepth || m_maxDepth < 0) {
-            Float orbifoldAttenuation = m_odata.attenuate(ray, its);
 			if (!its.isValid()) {
 				/* If no intersection could be found, potentially return
 				   radiance from a environment luminaire if it exists */
-				if ((rRec.type & RadianceQueryRecord::EEmittedRadiance)
-					&& (!m_hideEmitters || scattered))
-                    Li += throughput * scene->evalEnvironment(ray) * (m_odata.m_incompletenessMode ? 1.0 : orbifoldAttenuation);
+                if ((rRec.type & RadianceQueryRecord::EEmittedRadiance) && (!m_hideEmitters || scattered)) {
+                    Li += throughput * scene->evalEnvironment(ray);
+                }
 				break;
 			}
 
 			const BSDF *bsdf = its.getBSDF(ray);
 
 			/* Possibly include emitted radiance if requested */
-			if (its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance)
-				&& (!m_hideEmitters || scattered))
-                Li += throughput * its.Le(-ray.d) * orbifoldAttenuation;
+            if (its.isEmitter() && (rRec.type & RadianceQueryRecord::EEmittedRadiance) && (!m_hideEmitters || scattered)) {
+                Li += throughput * its.Le(-ray.d);
+            }
 
 			/* Include radiance from a subsurface scattering model if requested */
-			if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance))
-                Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth) * orbifoldAttenuation;
+            if (its.hasSubsurface() && (rRec.type & RadianceQueryRecord::ESubsurfaceRadiance)) {
+                Li += throughput * its.LoSub(scene, rRec.sampler, -ray.d, rRec.depth);
+            }
 
-			if ((rRec.depth >= m_maxDepth && m_maxDepth > 0)
-				|| (m_strictNormals && dot(ray.d, its.geoFrame.n)
-					* Frame::cosTheta(its.wi) >= 0)) {
-
+            if ((rRec.depth >= m_maxDepth && m_maxDepth > 0) || (m_strictNormals && dot(ray.d, its.geoFrame.n) * Frame::cosTheta(its.wi) >= 0)) {
 				/* Only continue if:
 				   1. The current path length is below the specifed maximum
 				   2. If 'strictNormals'=true, when the geometric and shading
@@ -184,10 +188,8 @@ public:
 			/* Estimate the direct illumination if this is requested */
 			DirectSamplingRecord dRec(its);
 
-			if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance &&
-				(bsdf->getType() & BSDF::ESmooth)) {
+            if (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance && (bsdf->getType() & BSDF::ESmooth)) {
                 Scene::OrbifoldRecord orec = scene->sampleEmitterDirectO(dRec, rRec.nextSample2D());
-
                 Spectrum value = orec.value;
 				if (!value.isZero()) {
                     value *= m_odata.attenuate(orec.ray, orec.its);
@@ -210,7 +212,7 @@ public:
 
 						/* Weight using the power heuristic */
 						Float weight = miWeight(dRec.pdf, bsdfPdf);
-                        Li += throughput * value * bsdfVal * weight * orbifoldAttenuation;
+                        Li += throughput * value * bsdfVal * weight;
 					}
 				}
 			}
@@ -223,16 +225,18 @@ public:
 			Float bsdfPdf;
 			BSDFSamplingRecord bRec(its, rRec.sampler, ERadiance);
 			Spectrum bsdfWeight = bsdf->sample(bRec, bsdfPdf, rRec.nextSample2D());
-			if (bsdfWeight.isZero())
+            if (bsdfWeight.isZero()) {
 				break;
+            }
 
 			scattered |= bRec.sampledType != BSDF::ENull;
 
 			/* Prevent light leaks due to the use of shading normals */
 			const Vector wo = its.toWorld(bRec.wo);
 			Float woDotGeoN = dot(its.geoFrame.n, wo);
-			if (m_strictNormals && woDotGeoN * Frame::cosTheta(bRec.wo) <= 0)
+            if (m_strictNormals && woDotGeoN * Frame::cosTheta(bRec.wo) <= 0) {
 				break;
+            }
 
 			bool hitEmitter = false;
 			Spectrum value;
@@ -242,7 +246,7 @@ public:
 			if (scene->rayIntersect(ray, its)) {
 				/* Intersected something - check if it was a luminaire */
 				if (its.isEmitter()) {
-                    value = its.Le(-ray.d) * m_odata.attenuate(ray, its);
+                    value = its.Le(-ray.d);
 					dRec.setQuery(ray, its);
 					hitEmitter = true;
 				}
@@ -265,17 +269,15 @@ public:
 
 			/* Keep track of the throughput and relative
 			   refractive index along the path */
-            throughput *= bsdfWeight * orbifoldAttenuation;
+            throughput *= bsdfWeight * m_odata.attenuate(ray, its);
 			eta *= bRec.eta;
 
 			/* If a luminaire was hit, estimate the local illumination and
 			   weight using the power heuristic */
-			if (hitEmitter &&
-				(rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance)) {
+            if (hitEmitter && (rRec.type & RadianceQueryRecord::EDirectSurfaceRadiance)) {
 				/* Compute the prob. of generating that direction using the
 				   implemented direct illumination sampling technique */
-				const Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ?
-					scene->pdfEmitterDirect(dRec) : 0;
+                const Float lumPdf = (!(bRec.sampledType & BSDF::EDelta)) ? scene->pdfEmitterDirect(dRec) : 0;
                 Li += throughput * value * miWeight(bsdfPdf, lumPdf);
 			}
 
@@ -285,8 +287,9 @@ public:
 
 			/* Set the recursive query type. Stop if no surface was hit by the
 			   BSDF sample or if indirect illumination was not requested */
-			if (!its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance))
+            if (!its.isValid() || !(rRec.type & RadianceQueryRecord::EIndirectSurfaceRadiance)) {
 				break;
+            }
 			rRec.type = RadianceQueryRecord::ERadianceNoEmission;
 
 			if (rRec.depth++ >= m_rrDepth) {
