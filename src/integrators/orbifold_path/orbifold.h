@@ -24,12 +24,13 @@ struct OrbifoldData {
         m_numKernelTiles(1),
         m_type(OrbifoldType::OT_NONE),
         attenuate_callback(&OrbifoldData::attenuateTrivial),
-        collapse_callback(&OrbifoldData::collapseTrivial) {}
+        collapse_callback(&OrbifoldData::collapseTrivial),
+        m_incompletenessMode(false) {}
 
     ///
     /// \brief m_incompletenessMode
     /// Whether or not we are rendering an incompleteness image
-    bool m_incompletenessMode = false;
+    bool m_incompletenessMode;
 
     ///
     /// A scaling factor for the scense
