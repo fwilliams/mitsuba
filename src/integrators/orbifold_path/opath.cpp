@@ -116,6 +116,8 @@ public:
         m_odata = OrbifoldData();
         m_odata.m_incompletenessMode = props.getBoolean("incompleteness mode", false);
 
+        Log(EWarn, "INCOMPLETENESS MODE = %s", m_odata.m_incompletenessMode ? "true" : "false");
+
         m_odata.m_k[0] = props.getSpectrum("k1", Spectrum(1.0));
         m_odata.m_k[1] = props.getSpectrum("k2", Spectrum(1.0));
         m_odata.m_k[2] = props.getSpectrum("k3", Spectrum(1.0));
@@ -192,7 +194,9 @@ public:
                 Scene::OrbifoldRecord orec = scene->sampleEmitterDirectO(dRec, rRec.nextSample2D());
                 Spectrum value = orec.value;
 				if (!value.isZero()) {
-                    value *= m_odata.attenuate(orec.ray, orec.its);
+                    if (m_odata.m_incompletenessMode) {
+                        value *= m_odata.attenuate(orec.ray, orec.its);
+                    }
 					const Emitter *emitter = static_cast<const Emitter *>(dRec.object);
 
 					/* Allocate a record for querying the BSDF */
@@ -255,12 +259,14 @@ public:
 				const Emitter *env = scene->getEnvironmentEmitter();
 
 				if (env) {
-					if (m_hideEmitters && !scattered)
+                    if (m_hideEmitters && !scattered) {
 						break;
+                    }
 
-                    value = env->evalEnvironment(ray) * m_odata.attenuate(ray, its);;
-					if (!env->fillDirectSamplingRecord(dRec, ray))
+                    value = env->evalEnvironment(ray) /* * m_odata.attenuate(ray, its);*/;
+                    if (!env->fillDirectSamplingRecord(dRec, ray)) {
 						break;
+                    }
 					hitEmitter = true;
 				} else {
 					break;
@@ -269,7 +275,10 @@ public:
 
 			/* Keep track of the throughput and relative
 			   refractive index along the path */
-            throughput *= bsdfWeight * m_odata.attenuate(ray, its);
+            throughput *= bsdfWeight;
+            if (!m_odata.m_incompletenessMode) {
+                throughput *= m_odata.attenuate(ray, its);
+            }
 			eta *= bRec.eta;
 
 			/* If a luminaire was hit, estimate the local illumination and

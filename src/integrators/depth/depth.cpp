@@ -12,6 +12,7 @@ public:
         defaultColor.fromLinearRGB(1.0f, 1.0f, 1.0);
         m_color = defaultColor;
 //        m_color = props.getSpectrum("color", defaultColor);
+        m_maxDist = props.getFloat("max_depth");
     }
 
     /// Unserialize from a binary data stream
@@ -32,22 +33,15 @@ public:
         if (rRec.rayIntersect(ray)) {
             Float distance = rRec.its.t;
 
-            return Spectrum(1.0 - distance/m_maxDist) * m_color;
+            return Spectrum(distance/m_maxDist) * m_color;
         }
 
-        return Spectrum(0.0);
+        return Spectrum(1.0) * m_color;
     }
 
     /// Preprocess function -- called on the initiating machine
     bool preprocess(const Scene *scene, RenderQueue *queue, const RenderJob *job, int sceneResID, int cameraResID, int samplerResID) {
         SamplingIntegrator::preprocess(scene, queue, job, sceneResID, cameraResID, samplerResID);
-
-        const AABB& sceneAABB = scene->getAABB();
-
-        Point cameraPos = scene->getSensor()->getWorldTransform()->eval(0).transformAffine(Point(0.0));
-        for (int i = 0; i < 8; i++) {
-            m_maxDist = std::max(m_maxDist, (cameraPos - sceneAABB.getCorner(i)).length());
-        }
 
         return true;
     }

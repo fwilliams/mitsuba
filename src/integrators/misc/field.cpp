@@ -95,7 +95,7 @@ public:
 
 		if (props.hasProperty("undefined")) {
 			if (props.getType("undefined") == Properties::EFloat)
-				m_undefined = Spectrum(props.getFloat("undefined"));
+                m_undefined = Spectrum(props.getFloat("undefined"));
 			else
 				m_undefined = props.getSpectrum("undefined", Spectrum(0.0f));
 		}
