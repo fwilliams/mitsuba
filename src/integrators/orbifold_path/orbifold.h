@@ -20,12 +20,12 @@ struct OrbifoldData {
     };
 
     OrbifoldData() :
+        m_incompletenessMode(false),
         m_scale(Vector3(1, 1, 1)),
         m_numKernelTiles(1),
         m_type(OrbifoldType::OT_NONE),
         attenuate_callback(&OrbifoldData::attenuateTrivial),
-        collapse_callback(&OrbifoldData::collapseTrivial),
-        m_incompletenessMode(false) {}
+        collapse_callback(&OrbifoldData::collapseTrivial) {}
 
     ///
     /// \brief m_incompletenessMode
