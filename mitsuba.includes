@@ -16,6 +16,7 @@ src/integrators/orbifold_path
 src/integrators/photonmapper
 src/integrators/pssmlt
 src/integrators/ptracer
+src/integrators/obdpt
 src/libhw/data
 src/libpython
 src/medium

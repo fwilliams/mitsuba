@@ -3,12 +3,11 @@
 #define __MITSUBA_CORE_ORBIFOLD_H
 
 #include <mitsuba/render/shape.h>
-
+#include <string>
 
 MTS_NAMESPACE_BEGIN
 
 struct OrbifoldData {
-
     enum class OrbifoldType {
         OT_XX,
         OT_X2222,
@@ -93,7 +92,6 @@ struct OrbifoldData {
     /// \return The string representation of an orbifold type
     ///
     static std::string OrbifoldTypeToString(const OrbifoldType& ot);
-
 
 private:
 

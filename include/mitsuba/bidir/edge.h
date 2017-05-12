@@ -21,6 +21,7 @@
 #define __MITSUBA_BIDIR_EDGE_H_
 
 #include <mitsuba/bidir/common.h>
+#include <mitsuba/core/orbifold.h>
 
 MTS_NAMESPACE_BEGIN
 
@@ -124,7 +125,7 @@ struct MTS_EXPORT_BIDIR PathEdge {
 	 */
 	bool sampleNext(const Scene *scene, Sampler *sampler,
 			const PathVertex *pred, const Ray &ray, PathVertex *next,
-			ETransportMode mode);
+            ETransportMode mode, OrbifoldData* odata=nullptr);
 
 	/**
 	 * \brief Create a perturbed successor vertex and edge
@@ -408,7 +409,7 @@ struct MTS_EXPORT_BIDIR PathEdge {
 	 */
 	bool pathConnectAndCollapse(const Scene *scene, const PathEdge *predEdge,
 		const PathVertex *vs, const PathVertex *vt,
-		const PathEdge *succEdge, int &interactions);
+        const PathEdge *succEdge, int &interactions, OrbifoldData* odata=nullptr);
 
 	/// Create a deep copy of this edge
 	PathEdge *clone(MemoryPool &pool) const;

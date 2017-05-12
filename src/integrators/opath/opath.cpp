@@ -18,7 +18,8 @@
 
 #include <mitsuba/render/scene.h>
 #include <mitsuba/core/statistics.h>
-#include "orbifold.h"
+#include <mitsuba/core/orbifold.h>
+
 
 MTS_NAMESPACE_BEGIN
 

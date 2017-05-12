@@ -571,6 +571,7 @@ include/mitsuba/core/mstream.h
 include/mitsuba/core/netobject.h
 include/mitsuba/core/normal.h
 include/mitsuba/core/object.h
+include/mitsuba/core/orbifold.h
 include/mitsuba/core/octree.h
 include/mitsuba/core/platform.h
 include/mitsuba/core/plugin.h
@@ -775,8 +776,13 @@ src/integrators/oerpt/erpt.h
 src/integrators/oerpt/erpt.cpp
 src/integrators/oerpt/erpt_proc.h
 src/integrators/oerpt/erpt_proc.cpp
-src/integrators/orbifold_path/opath.cpp
-src/integrators/orbifold_path/orbifold.cpp
+src/integrators/obdpt/obdpt.cpp
+src/integrators/obdpt/obdpt.h
+src/integrators/obdpt/obdpt_proc.cpp
+src/integrators/obdpt/obdpt_proc.h
+src/integrators/obdpt/obdpt_wr.cpp
+src/integrators/obdpt/obdpt_wr.h
+src/integrators/opath/opath.cpp
 src/integrators/path/path.cpp
 src/integrators/path/volpath.cpp
 src/integrators/path/volpath_simple.cpp
@@ -833,6 +839,7 @@ src/libcore/math.cpp
 src/libcore/mmap.cpp
 src/libcore/mstream.cpp
 src/libcore/object.cpp
+src/libcore/orbifold.cpp
 src/libcore/platform_darwin.mm
 src/libcore/plugin.cpp
 src/libcore/properties.cpp

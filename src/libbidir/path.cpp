@@ -43,7 +43,7 @@ int Path::randomWalk(const Scene *scene, Sampler *sampler,
 		PathEdge *succEdge = pool.allocEdge();
 
 		if (!curVertex->sampleNext(scene, sampler, predVertex, predEdge, succEdge,
-				succVertex, mode, rrStart != -1 && i >= rrStart, &throughput)) {
+                succVertex, mode, rrStart != -1 && i >= rrStart, &throughput, m_odata)) {
 			pool.release(succVertex);
 			pool.release(succEdge);
 			return i;
@@ -95,7 +95,7 @@ int Path::randomWalkFromPixel(const Scene *scene, Sampler *sampler,
 		PathEdge *succEdge = pool.allocEdge();
 
 		if (!curVertex->sampleNext(scene, sampler, predVertex, predEdge, succEdge,
-				succVertex, ERadiance, rrStart != -1 && t >= rrStart, &throughput)) {
+                succVertex, ERadiance, rrStart != -1 && t >= rrStart, &throughput, m_odata)) {
 			pool.release(succVertex);
 			pool.release(succEdge);
 			return t;
@@ -114,7 +114,7 @@ int Path::randomWalkFromPixel(const Scene *scene, Sampler *sampler,
 
 std::pair<int, int> Path::alternatingRandomWalkFromPixel(const Scene *scene, Sampler *sampler,
 		Path &emitterPath, int nEmitterSteps, Path &sensorPath, int nSensorSteps,
-		const Point2i &pixelPosition, int rrStart, MemoryPool &pool) {
+        const Point2i &pixelPosition, int rrStart, MemoryPool &pool, OrbifoldData* odata) {
 	/* Determine the relevant edges and vertices to start the random walk */
 	PathVertex *curVertexS  = emitterPath.vertex(0),
 	           *curVertexT  = sensorPath.vertex(0),
@@ -127,7 +127,7 @@ std::pair<int, int> Path::alternatingRandomWalkFromPixel(const Scene *scene, Sam
 	/* Use a special sampling routine for the first two sensor vertices so that
 	   the resulting subpath passes through the specified pixel position */
 	int t = curVertexT->sampleSensor(scene,
-		sampler, pixelPosition, e0, v1, e1, v2);
+        sampler, pixelPosition, e0, v1, e1, v2, odata);
 
 	if (t >= 1) {
 		sensorPath.append(e0, v1);
@@ -157,7 +157,7 @@ std::pair<int, int> Path::alternatingRandomWalkFromPixel(const Scene *scene, Sam
 
 			if (curVertexT->sampleNext(scene, sampler, predVertexT,
 					predEdgeT, succEdgeT, succVertexT, ERadiance,
-					rrStart != -1 && t >= rrStart, &throughputT)) {
+                    rrStart != -1 && t >= rrStart, &throughputT, odata)) {
 				sensorPath.append(succEdgeT, succVertexT);
 				predVertexT = curVertexT;
 				curVertexT = succVertexT;
@@ -178,7 +178,7 @@ std::pair<int, int> Path::alternatingRandomWalkFromPixel(const Scene *scene, Sam
 
 			if (curVertexS->sampleNext(scene, sampler, predVertexS,
 					predEdgeS, succEdgeS, succVertexS, EImportance,
-					rrStart != -1 && s >= rrStart, &throughputS)) {
+                    rrStart != -1 && s >= rrStart, &throughputS, odata)) {
 				emitterPath.append(succEdgeS, succVertexS);
 				predVertexS = curVertexS;
 				curVertexS = succVertexS;

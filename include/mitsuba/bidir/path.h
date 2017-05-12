@@ -174,7 +174,7 @@ public:
 	static std::pair<int, int> alternatingRandomWalkFromPixel(const Scene *scene,
 		Sampler *sampler, Path &emitterPath, int nEmitterSteps,
 		Path &sensorPath, int nSensorSteps, const Point2i &pixelPosition,
-		int rrStart, MemoryPool &pool);
+        int rrStart, MemoryPool &pool, OrbifoldData* odata=nullptr);
 
 	/**
 	 * \brief Verify the cached values stored in this path
@@ -508,6 +508,8 @@ public:
 
 	/// Return a basic string summary of the path
 	std::string summarize() const;
+
+    OrbifoldData* m_odata = nullptr;
 
 	//! @}
     /* ==================================================================== */

@@ -690,7 +690,7 @@ bool SpecularManifold::update(Path &path, int start, int end) {
 			if (m_vertices.size() >= 3) {
 				PathVertex *succ2 = path.vertex(i+2*step);
 				PathEdge *succ2Edge = path.edge(predEdgeIdx + 2*step);
-				if (!succ->sampleNext(m_scene, NULL, vertex, succEdge, succ2Edge, succ2, mode)) {
+                if (!succ->sampleNext(m_scene, NULL, vertex, succEdge, succ2Edge, succ2, mode, false, nullptr, nullptr /* FRANCIS UNDONE: Make Manifold Work with Orbifold */)) {
 					#if MTS_MANIFOLD_DEBUG == 1
 						cout << "update(): failed in sampleNext() / pinned direction!" << endl;
 					#endif

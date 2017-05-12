@@ -21,6 +21,7 @@
 #define __MITSUBA_BIDIR_VERTEX_H_
 
 #include <mitsuba/bidir/common.h>
+#include <mitsuba/core/orbifold.h>
 
 MTS_NAMESPACE_BEGIN
 
@@ -273,7 +274,7 @@ struct MTS_EXPORT_BIDIR PathVertex {
 		const PathVertex *pred, const PathEdge *predEdge,
 		PathEdge *succEdge, PathVertex *succ,
 		ETransportMode mode, bool russianRoulette = false,
-		Spectrum *throughput = NULL);
+        Spectrum *throughput = NULL, OrbifoldData* odata=nullptr);
 
 	/**
 	 * \brief \a Direct sampling: given the current vertex as a reference
@@ -346,7 +347,7 @@ struct MTS_EXPORT_BIDIR PathVertex {
 	 *    were successfully filled)
 	 */
 	int sampleSensor(const Scene *scene, Sampler *sampler, const Point2i &pixelPosition,
-		PathEdge *e0, PathVertex *v1, PathEdge *e1, PathVertex *v2);
+        PathEdge *e0, PathVertex *v1, PathEdge *e1, PathVertex *v2, OrbifoldData* odata=nullptr);
 
 	/**
 	 * \brief Create a perturbed successor vertex and edge

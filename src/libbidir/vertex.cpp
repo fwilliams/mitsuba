@@ -35,7 +35,7 @@ void PathVertex::makeEndpoint(const Scene *scene, Float time, ETransportMode mod
 bool PathVertex::sampleNext(const Scene *scene, Sampler *sampler,
 		const PathVertex *pred, const PathEdge *predEdge,
 		PathEdge *succEdge, PathVertex *succ,
-		ETransportMode mode, bool russianRoulette, Spectrum *throughput) {
+        ETransportMode mode, bool russianRoulette, Spectrum *throughput, OrbifoldData* odata) {
 	Ray ray;
 
 	memset(succEdge, 0, sizeof(PathEdge));
@@ -280,7 +280,7 @@ bool PathVertex::sampleNext(const Scene *scene, Sampler *sampler,
 		}
 	}
 
-	if (!succEdge->sampleNext(scene, sampler, this, ray, succ, mode)) {
+    if (!succEdge->sampleNext(scene, sampler, this, ray, succ, mode, odata)) {
 		/* Sampling a successor edge + vertex failed, hence the vertex
 		   is not committed to a particular measure yet -- revert. */
 		measure = EInvalidMeasure;
@@ -310,7 +310,7 @@ bool PathVertex::sampleNext(const Scene *scene, Sampler *sampler,
 
 int PathVertex::sampleSensor(const Scene *scene, Sampler *sampler,
 		const Point2i &pixelPosition_, PathEdge *e0, PathVertex *v1,
-		PathEdge *e1, PathVertex *v2) {
+        PathEdge *e1, PathVertex *v2, OrbifoldData* odata) {
 	BDAssert(type == ESensorSupernode);
 	const EndpointRecord &eRec = getEndpointRecord();
 	const Sensor *sensor = scene->getSensor();
@@ -367,7 +367,7 @@ int PathVertex::sampleSensor(const Scene *scene, Sampler *sampler,
 	ray.setOrigin(pRec.p);
 	ray.setDirection(dRec.d);
 
-	if (!e1->sampleNext(scene, sampler, v1, ray, v2, ERadiance)) {
+    if (!e1->sampleNext(scene, sampler, v1, ray, v2, ERadiance, odata)) {
 		v1->measure = EInvalidMeasure;
 		return 1;
 	}

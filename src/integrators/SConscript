@@ -1,10 +1,11 @@
 Import('env', 'sys', 'plugins')
 
+env.Append(LIBS=['mitsuba-core'])
 plugins += env.SharedLibrary('ao', ['direct/ao.cpp'])
 plugins += env.SharedLibrary('direct', ['direct/direct.cpp'])
 plugins += env.SharedLibrary('depth', ['depth/depth.cpp'])
 plugins += env.SharedLibrary('path', ['path/path.cpp'])
-plugins += env.SharedLibrary('opath', ['orbifold_path/opath.cpp', 'orbifold_path/orbifold.cpp'])
+plugins += env.SharedLibrary('opath', ['opath/opath.cpp', 'orbifold.cpp'])
 plugins += env.SharedLibrary('volpath', ['path/volpath.cpp'])
 plugins += env.SharedLibrary('volpath_simple', ['path/volpath_simple.cpp'])
 plugins += env.SharedLibrary('ptracer', ['ptracer/ptracer.cpp', 'ptracer/ptracer_proc.cpp'])
@@ -42,8 +43,8 @@ plugins += bidirEnv.SharedLibrary('erpt',
 	['erpt/erpt.cpp', 'erpt/erpt_proc.cpp']
 )
 
-plugins += bidirEnv.SharedLibrary('oerpt',
-	['oerpt/erpt.cpp', 'oerpt/erpt_proc.cpp']
+plugins += bidirEnv.SharedLibrary('obdpt',
+        ['obdpt/obdpt.cpp', 'obdpt/obdpt_wr.cpp', 'obdpt/obdpt_proc.cpp', 'orbifold.cpp']
 )
 
 Export('plugins')

@@ -26,7 +26,7 @@ static StatsCounter mediumInconsistencies("Bidirectional layer",
 
 bool PathEdge::sampleNext(const Scene *scene, Sampler *sampler,
 		const PathVertex *pred, const Ray &ray, PathVertex *succ,
-		ETransportMode mode) {
+        ETransportMode mode, OrbifoldData* odata) {
 	/* First, check if there is a surface in the sampled direction */
 	Intersection &its = succ->getIntersection();
 	bool surface = scene->rayIntersectAll(ray, its);
@@ -66,6 +66,18 @@ bool PathEdge::sampleNext(const Scene *scene, Sampler *sampler,
 	/* Direction always points along the light path (from the light source along the path) */
 	if(mode == ERadiance)
 		d = -d;
+
+
+    if (odata != nullptr) {
+        Intersection its = succ->getIntersection();
+        Spectrum att = odata->attenuate(ray, its);
+//        weight[ERadiance] *= att;
+//        weight[EImportance] *= att;
+        weight[mode] *= att;
+    } else {
+        assert(false);
+        abort();
+    }
 
 	return true;
 }
@@ -441,7 +453,7 @@ bool PathEdge::pathConnect(const Scene *scene, const PathEdge *predEdge,
 
 bool PathEdge::pathConnectAndCollapse(const Scene *scene, const PathEdge *predEdge,
 		const PathVertex *vs, const PathVertex *vt,
-		const PathEdge *succEdge, int &interactions) {
+        const PathEdge *succEdge, int &interactions, OrbifoldData* odata) {
 	if (vs->isEmitterSupernode() || vt->isSensorSupernode()) {
 		Float radianceTransport   = vt->isSensorSupernode() ? 1.0f : 0.0f,
 		      importanceTransport = 1-radianceTransport;
@@ -452,6 +464,18 @@ bool PathEdge::pathConnectAndCollapse(const Scene *scene, const PathEdge *predEd
 		pdf[EImportance] = importanceTransport;
 		weight[ERadiance] = Spectrum(radianceTransport);
 		weight[EImportance] = Spectrum(importanceTransport);
+
+        if (odata != nullptr) {
+            Ray ray;
+            ray.d = vs->getIntersection().p - vt->getIntersection().p;
+            ray.d /= ray.d.length();
+            ray.o = vt->getIntersection().p;
+
+            Spectrum att = odata->attenuate(ray, vs->getIntersection());
+            weight[EImportance] *= att;
+            weight[ERadiance] *= att;
+        }
+
 		interactions = 0;
 	} else {
 		Point vsp = vs->getPosition(), vtp = vt->getPosition();
@@ -565,6 +589,12 @@ bool PathEdge::pathConnectAndCollapse(const Scene *scene, const PathEdge *predEd
 			++mediumInconsistencies;
 			return false;
 		}
+
+        if (odata != nullptr) {
+            Spectrum att = odata->attenuate(ray, vs->getIntersection());
+            weight[EImportance] *= att/2.0;
+            weight[ERadiance] *= att/2.0;
+        }
 	}
 
 	/* Direction always points along the light path (from the light source along the path) */
